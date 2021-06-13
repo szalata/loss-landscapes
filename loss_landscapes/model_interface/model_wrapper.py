@@ -45,7 +45,7 @@ class ModelWrapper(abc.ABC):
         return itertools.chain([module.named_parameters() for module in self.modules])
 
     @abc.abstractmethod
-    def forward(self, x):
+    def forward(self, x, masks):
         pass
 
 
@@ -53,8 +53,8 @@ class SimpleModelWrapper(ModelWrapper):
     def __init__(self, model: torch.nn.Module):
         super().__init__([model])
 
-    def forward(self, x):
-        return self.modules[0](x)
+    def forward(self, x, masks):
+        return self.modules[0](x, masks)
 
 
 class GeneralModelWrapper(ModelWrapper):
@@ -63,7 +63,7 @@ class GeneralModelWrapper(ModelWrapper):
         self.model = model
         self.forward_fn = forward_fn
 
-    def forward(self, x):
+    def forward(self, x, masks):
         return self.forward_fn(self.model, x)
 
 

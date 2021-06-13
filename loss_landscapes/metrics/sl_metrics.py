@@ -17,14 +17,15 @@ from loss_landscapes.model_interface.model_wrapper import ModelWrapper
 
 class Loss(Metric):
     """ Computes a specified loss function over specified input-output pairs. """
-    def __init__(self, loss_fn, inputs: torch.Tensor, target: torch.Tensor):
+    def __init__(self, loss_fn, inputs: torch.Tensor, target: torch.Tensor, masks: torch.Tensor):
         super().__init__()
         self.loss_fn = loss_fn
         self.inputs = inputs
         self.target = target
+        self.masks = masks
 
     def __call__(self, model_wrapper: ModelWrapper) -> float:
-        return self.loss_fn(model_wrapper.forward(self.inputs), self.target).item()
+        return self.loss_fn(model_wrapper.forward(self.inputs, self.masks), self.target).item()
 
 
 class LossGradient(Metric):
